@@ -19,4 +19,3 @@ class ServerTests extends TestCase
 		$ftp->connect();
 	}
 }
-

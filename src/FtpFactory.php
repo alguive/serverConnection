@@ -48,4 +48,3 @@ class FtpFactory extends ServerAbstract
 		return $this;
 	}
 }
-
