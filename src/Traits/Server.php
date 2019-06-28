@@ -18,41 +18,105 @@ Trait Server
 			$directory = $this->getPath();
 		}
 
-		return ftp_nlist($this->getConnection(), $this->getPath());
+		$dir = ftp_nlist($this->getConnection(), $this->getPath());
+
+		return !$dir ? [] : $dir;
 	}
 
-	public function changeDir(string $path = null): bool
+	/**
+	 * Change the current directory
+	 *
+	 * @param string|null $path
+	 *
+	 * @return bool|Exception
+	 */
+	public function changeDir(string $path = null)
 	{
-		/** TODO */
+		if (!ftp_chdir($this->getConnection(), $this->formatDirectory($path))) {
+			throw new Exception('Error changing directory.');
+		}
+
+		return $this;
 	}
 
+	/**
+	 * Put file in the FTP server.
+	 *
+	 * @param string $remoteFile
+	 * @param string $localFile
+	 *
+	 * @return bool|Exception
+	 */
 	public function putFile(string $remoteFile, string $localFile): bool
 	{
-		/** TODO */
+		$remoteFile = $this->formatRemoteFile($remoteFile);
+
+		if(!ftp_put($this->getConnection(), $remoteFile, $this->formatDirectory($localFile), FTP_BINARY)) {
+			throw new Exception('Error putting file into server');
+		}
+
+		return true;
 	}
 
+	/**
+	 * Getting the current FTP path
+	 *
+	 * @return string
+	 */
 	public function getCurrentPath(): string
 	{
-		/** TODO */
+		return ftp_pwd($this->getConnection());
 	}
 
-	public function formatDirectory(string $path = null): string
+	/**
+	 * Format the path if required
+	 *
+	 * @param string|null $path
+	 *
+	 * @return string
+	 */
+	protected function formatDirectory(string $path = null): string
 	{
-		/** TODO */
+		if (null === $path || '' == trim($path)) {
+			$path = $this->addSlash('');
+		}
+
+		return $this->hasSlashSeparator($path) ? $this->addSlash($path) : $path;
 	}
 
-	protected function hasSlashSeparator(string $path): bool
+	/**
+	 * Check if the path has slash separator
+	 *
+	 * @param string $path
+	 *
+	 * @return boolean
+	 */
+	private function hasSlashSeparator(string $path): bool
 	{
+		preg_match('/^(\/).*(\/)$/', $path, $matches);
 
+		return !empty($matches);
 	}
 
-	protected function addSlash(string $path): string
+	/**
+	 * Return formatted path with slash
+	 *
+	 * @param string $path
+	 */
+	private function addSlash(string $path): string
 	{
-		/** TODO */
+		return sprintf('/%s', ltrim($path, '/'));
 	}
 
-	protected function formatRemoteFile(string $remoteFile): string
+	/**
+	 * Formatting remote path file
+	 *
+	 * @param string $remoteFilestring
+	 *
+	 * @return [type]
+	 */
+	private function formatRemoteFile(string $remoteFile): string
 	{
-
+		return false != strpos($remoteFile, '/') ? $this->formatDirectory($remoteFile) : sprintf('%s/%s', $this->getCurrentPath(), $remoteFile);
 	}
 }

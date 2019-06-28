@@ -1,9 +1,11 @@
 <?php
 
+
 namespace Server;
 
 use Exception;
 use Server\Traits\Server;
+use InvalidArgumentException;
 
 abstract class ServerAbstract
 {
@@ -58,6 +60,11 @@ abstract class ServerAbstract
 		$this->initParams($params);
 	}
 
+	public function __destruct()
+	{
+
+	}
+
 	/**
 	 * Initialize parameters.
 	 *
@@ -73,11 +80,6 @@ abstract class ServerAbstract
 				$this->$functionName($param);
 			}
 		}
-	}
-
-	public function __destruct()
-	{
-
 	}
 
 	/**
@@ -113,9 +115,9 @@ abstract class ServerAbstract
 	 *
 	 * @param string|null $password
 	 */
-	public function setPasssword(string $password = null): self
+	public function setPassword(string $password = null): self
 	{
-		$this->password = null === $password ? '' : $password;
+		$this->password = (null === $password) ? '' : $password;
 
 		return $this;
 	}
@@ -220,6 +222,11 @@ abstract class ServerAbstract
 		return $this->passive;
 	}
 
+	/**
+	 * Getting server path
+	 *
+	 * @return string
+	 */
 	protected function getPath(): string
 	{
 		return $this->path;
@@ -239,9 +246,24 @@ abstract class ServerAbstract
 		return $this->connection;
 	}
 
+	/**
+	 * Stablish new FTP connection
+	 *
+	 * @return self
+	 */
 	abstract public function connect(); /** @TODO declare(strict_types=1) */
 
+	/**
+	 * Create login with the server
+	 *
+	 * @return self
+	 */
 	abstract protected function login();
 
+	/**
+	 * Create connection [Connection + login] with the server
+	 *
+	 * @return self
+	 */
 	abstract protected function createConnection();
 }

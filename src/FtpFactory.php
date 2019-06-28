@@ -17,33 +17,35 @@ class FtpFactory extends ServerAbstract
 	{
 		try {
 			$this->createConnection();
-			$this->login();
-
-			$this->listDir();
 		} catch (Exception $e) {
-			/** Throw Exception */
-			dump($e->getMessage());
+			echo $e->getMessage();
 		}
+
+		return $this;
 	}
 
-	protected function login()
+
+	protected function login(): ?self
 	{
-		try {
-			ftp_login($this->getConnection(), $this->getUsername(), $this->getPassword());
-		} catch (Exception $e) {
-			dump($e->getMessage());
+		if (!ftp_login($this->getConnection(), $this->getUsername(), $this->getPassword())) {
+			throw new Exception('Error Login to the server.');
 		}
+
+		return $this;
 	}
 
-	protected function createConnection(): self
+
+	protected function createConnection(): ?self
 	{
-		try {
-			$this->connection = ftp_connect($this->getServer(), $this->getPort());
-			$this->setPassiveMode();
-		} catch (Exception $e) {
-			dump($e->getMessage());
+		$this->connection = ftp_connect($this->getServer(), $this->getPort());
+
+		if (!$this->connection) {
+			throw new Exception('Error connecting to the server.');
 		}
 
+		$this->setPassiveMode();
+
+		$this->login();
 
 		return $this;
 	}
