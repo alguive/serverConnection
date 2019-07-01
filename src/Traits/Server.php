@@ -12,10 +12,14 @@ Trait Server
 	 *
 	 * @return array
 	 */
-	public function listDir(string $directory = null): array
+	public function listDir(string $directory = null, bool $recursive = false): array
 	{
 		if (null === $directory) {
 			$directory = $this->getPath();
+		}
+
+		if ($this->getConnection() instanceof \phpseclib\Net\SFTP) {
+			return $this->getConnection()->nlist($directory, $recursive);
 		}
 
 		$dir = ftp_nlist($this->getConnection(), $this->getPath());
