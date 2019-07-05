@@ -1,5 +1,5 @@
 <?php
-
+declare(strict_types=1);
 
 namespace Server;
 
@@ -251,7 +251,7 @@ abstract class ServerAbstract
 	 *
 	 * @return self
 	 */
-	abstract public function connect(); /** @TODO declare(strict_types=1) */
+	abstract public function connect();
 
 	/**
 	 * Create login with the server

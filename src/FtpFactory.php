@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Server;
 
@@ -7,12 +8,17 @@ use Exception;
 class FtpFactory extends ServerAbstract
 {
 
+	/**
+	 * @inheritdoc
+	 */
 	public function __construct(array $params)
 	{
 		parent::__construct($params);
 	}
 
-
+	/**
+	 * @inheritdoc
+	 */
 	public function connect()
 	{
 		try {
@@ -24,7 +30,9 @@ class FtpFactory extends ServerAbstract
 		return $this;
 	}
 
-
+	/**
+	 * @inheritdoc
+	 */
 	protected function login(): ?self
 	{
 		if (!ftp_login($this->getConnection(), $this->getUsername(), $this->getPassword())) {
@@ -34,7 +42,9 @@ class FtpFactory extends ServerAbstract
 		return $this;
 	}
 
-
+	/**
+	 * @inheritdoc
+	 */
 	protected function createConnection(): ?self
 	{
 		$this->connection = ftp_connect($this->getServer(), $this->getPort());

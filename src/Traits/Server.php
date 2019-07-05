@@ -1,6 +1,9 @@
 <?php
+declare(strict_types=1);
 
 namespace Server\Traits;
+
+use Exception;
 
 Trait Server
 {
@@ -12,7 +15,7 @@ Trait Server
 	 *
 	 * @return array
 	 */
-	public function listDir(string $directory = null, bool $recursive = false): array
+	public function nlist(string $directory = null, bool $recursive = false): array
 	{
 		if (null === $directory) {
 			$directory = $this->getPath();
@@ -34,10 +37,16 @@ Trait Server
 	 *
 	 * @return bool|Exception
 	 */
-	public function changeDir(string $path = null)
+	public function chdir(string $path = null)
 	{
-		if (!ftp_chdir($this->getConnection(), $this->formatDirectory($path))) {
-			throw new Exception('Error changing directory.');
+		if ($this->getConnection() instanceof \phpseclib\Net\SFTP) {
+			if (!$this->getConnection()->chdir($path)) {
+				throw new Exception('Error changing directory.');
+			}
+		} else {
+			if (!ftp_chdir($this->getConnection(), $this->formatDirectory($path))) {
+				throw new Exception('Error changing directory.');
+			}
 		}
 
 		return $this;
@@ -51,12 +60,16 @@ Trait Server
 	 *
 	 * @return bool|Exception
 	 */
-	public function putFile(string $remoteFile, string $localFile): bool
+	public function put(string $remoteFile, string $localFile): bool
 	{
-		$remoteFile = $this->formatRemoteFile($remoteFile);
-
-		if(!ftp_put($this->getConnection(), $remoteFile, $this->formatDirectory($localFile), FTP_BINARY)) {
-			throw new Exception('Error putting file into server');
+		if ($this->getConnection() instanceof \phpseclib\Net\SFTP) {
+			if (!$this->getConnection()->put($this->formatRemoteFile($remoteFile), $this->formatDirectory($localFile))) {
+				throw new Exception('Error putting file into server');
+			}
+		} else {
+			if(!ftp_put($this->getConnection(), $this->formatRemoteFile($remoteFile), $this->formatDirectory($localFile), FTP_BINARY)) {
+				throw new Exception('Error putting file into server');
+			}
 		}
 
 		return true;
@@ -69,7 +82,7 @@ Trait Server
 	 */
 	public function getCurrentPath(): string
 	{
-		return ftp_pwd($this->getConnection());
+		return ($this->getConnection() instanceof \phpseclib\Net\SFTP) ? $this->getConnection()->pwd() : ftp_pwd($this->getConnection());
 	}
 
 	/**

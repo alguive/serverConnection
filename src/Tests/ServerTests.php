@@ -33,7 +33,7 @@ class ServerTests extends TestCase
 			$this->ftp->connect();
 		}
 
-		$this->assertTrue(is_array($this->ftp->listDir()));
+		$this->assertTrue(is_array($this->ftp->nlist()));
 	}
 
 	public function testCanGetCurrentPath()
@@ -51,7 +51,7 @@ class ServerTests extends TestCase
 		$this->sftp = new SftpAbstract($this->sftpParams);
 		$this->sftp->connect();
 
-		dump($this->sftp->listDir());
+		dump($this->sftp->put('pub', '/Users/alvarog/Desktop/test.txt'));
 	}
 
 }
