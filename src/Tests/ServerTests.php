@@ -26,6 +26,9 @@ class ServerTests extends TestCase
 		$this->assertInstanceOf(FtpFactory::class, $this->ftp);
 	}
 
+	/**
+	 * Direcotry listing
+	 */
 	public function testCanListDir()
 	{
 		if (null === $this->ftp) {
@@ -36,6 +39,9 @@ class ServerTests extends TestCase
 		$this->assertTrue(is_array($this->ftp->nlist()));
 	}
 
+	/**
+	 * Get path.
+	 */
 	public function testCanGetCurrentPath()
 	{
 		if (null === $this->ftp) {

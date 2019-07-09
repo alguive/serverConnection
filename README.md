@@ -5,6 +5,10 @@ This FTP/SFTP project provides an easy way to stablish connection with FTP/SFTP 
 
 You will be able to put files on the server, list server directories, create directories, remove directories, move inside the server directories, etc...
 
+```
+Composer install
+```
+
 
 ## List of params
 ```
