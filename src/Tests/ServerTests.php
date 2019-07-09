@@ -46,12 +46,4 @@ class ServerTests extends TestCase
 		$this->assertTrue(is_string($this->ftp->getCurrentPath()));
 	}
 
-	public function test1()
-	{
-		$this->sftp = new SftpAbstract($this->sftpParams);
-		$this->sftp->connect();
-
-		dump($this->sftp->put('pub', '/Users/alvarog/Desktop/test.txt'));
-	}
-
 }
